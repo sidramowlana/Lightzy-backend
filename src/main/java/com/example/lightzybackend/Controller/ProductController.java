@@ -9,6 +9,7 @@ import com.example.lightzybackend.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,7 +40,6 @@ public class ProductController {
     }
 
 //    get all designerproduct
-
     @RequestMapping(value = "/allDesignerProducts")
     public List<DesignerProduct> getAllDesignerProducts() {
         List<DesignerProduct> designerProductList = designerProductRepository.findAll();
@@ -53,7 +53,7 @@ public class ProductController {
         return designerProduct;
     }
 
-    //    //get by product name
+    //get by product name
     @RequestMapping(value = "/product-name/{productName}")
     public Product getProductByName(@PathVariable String productName) {
         Product product = productRepository.findByProductName(productName);
@@ -74,16 +74,19 @@ public class ProductController {
     }
 
     //admin add new product
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "add-product")
     public ResponseEntity<?> addNewProduct(@Valid @RequestBody Product newProduct ){
         return productService.addNewProduct(newProduct);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value="update-product/{productId}")
     public ResponseEntity<?> updateProduct(@PathVariable Integer productId, @RequestBody Product updateProduct ){
         return productService.updateProduct(productId,updateProduct);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value="delete-product/{productId}")
     public void deleteProduct(@PathVariable Integer productId ){
         productService.deleteProduct(productId);
