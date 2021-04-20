@@ -8,12 +8,14 @@ import com.example.lightzybackend.Repository.ProductRepository;
 import com.example.lightzybackend.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RequestMapping("api/product/")
@@ -34,7 +36,6 @@ public class ProductController {
 
     @RequestMapping(value = "/allProducts")
     public List<Product> getAllProducts() {
-//        List<Product> productList = productRepository.findAll();
         List<Product> productList = productRepository.findAll(Sort.by(Sort.Direction.DESC, "productId"));
         return productList;
     }
@@ -73,6 +74,10 @@ public class ProductController {
         return productList;
     }
 
+    @RequestMapping(value = "product-gallery/all")
+    public ResponseEntity getAllProductsByPagination(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+        return new ResponseEntity<Map<String, Object>>(productService.getAllProductsByPagination(page, size), HttpStatus.OK);
+    }
     //admin add new product
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "add-product")
